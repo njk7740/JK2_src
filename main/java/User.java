@@ -32,4 +32,9 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public User match(String ID, String PW) {
+        if(this.ID.equals(ID) && this.PW.equals(PW)) return this;
+        return null;
+    }
 }

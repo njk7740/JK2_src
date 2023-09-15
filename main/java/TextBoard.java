@@ -2,8 +2,9 @@ public class TextBoard {
 
     PostList postList = new PostList();
     PostControler postControler = new PostControler();
-    IO io = new IO();
+    PostIO postIo = new PostIO();
     UserControler userControler = new UserControler();
+    User user;
 
     void Run() {
         // test
@@ -12,11 +13,12 @@ public class TextBoard {
             postControler.addPost("두번째 게시물", "테스트용입니다");
             postControler.addPost("세번째 게시물", "테스트용입니다");
         }
-        io.showStart();
+        postIo.showStart();
 
         while (true) {
-            System.out.print("명령어를 입력해주세요 : ");
-            String menu = io.inputString();
+            if(user != null) System.out.printf("명령어를 입력해주세요 [%s] : ", user.getName());
+            else System.out.print("명령어를 입력해주세요 : ");
+            String menu = postIo.inputString();
 
             if (menu.equals("exit")) {
                 System.out.println("프로그램을 종료합니다.");
@@ -28,7 +30,7 @@ public class TextBoard {
             else if (menu.equals("detail")) postControler.printPostDetail();
             else if (menu.equals("search")) postControler.searchPost();
             else if (menu.equals("signup")) userControler.signup();
-            else if (menu.equals("login")) userControler.login();
+            else if (menu.equals("login")) this.user = userControler.login();
 
         }
     }

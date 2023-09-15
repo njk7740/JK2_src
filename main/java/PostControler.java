@@ -1,19 +1,21 @@
+import java.util.HashMap;
+
 public class PostControler {
 
     PostList postList = new PostList();
-    IO io = new IO();
+    PostIO postIo = new PostIO();
 
     public void searchPost() {
         System.out.print("검색 키워드를 입력해주세요 : ");
-        boolean work = printPostsByKey(io.inputString());
-        if (!work) io.printNoSearchPost();
+        boolean work = printPostsByKey(postIo.inputString());
+        if (!work) postIo.printNoSearchPost();
     }
 
     public boolean printPostsByKey(String key) {
         boolean success = false;
         for (PostData post : postList.posts)
             if (post.getTitle().contains(key)) {
-                io.printSimple(post);
+                postIo.printSimple(post);
                 success = true;
             }
         return success;
@@ -21,29 +23,31 @@ public class PostControler {
 
     public void printComments(int postIndex) {
         for (CommentData comment : postList.posts.get(postIndex).getComments())
-            io.printComment(comment);
+            postIo.printComment(comment);
     }
 
     public void printPostDetail() {
         System.out.print("상세보기할 게시물 번호 : ");
-        int idx = getPostIdx(io.inputNumber());
+        int idx = getPostIdx(postIo.inputNumber());
         boolean run = true;
         while (run) {
             if (idx == -1) {
-                io.printNoPost();
+                postIo.printNoPost();
                 run = false;
             } else {
                 postList.posts.get(idx).setViews(postList.posts.get(idx).getViews() + 1);
-                io.printDetail(postList.posts.get(idx));
-                printComments(idx);
+                postIo.printDetail(postList.posts.get(idx));
+                if (postList.posts.get(idx).getComments().isEmpty())
+                    postIo.printEmptyComment();
+                else printComments(idx);
                 run = printDetailMenu(idx);
             }
         }
     }
 
     public boolean printDetailMenu(int postIdx) {
-        io.showDetailMenu();
-        int inputMenu = io.inputNumber();
+        postIo.showDetailMenu();
+        int inputMenu = postIo.inputNumber();
         if (inputMenu == 1) postList.setComment(postIdx);
         else if (inputMenu == 2) ; // todo 추천
         else if (inputMenu == 3) ; // todo 수정
@@ -64,10 +68,10 @@ public class PostControler {
 
     public void deletePost() {
         System.out.print("삭제할 게시물 번호 : ");
-        int number = io.inputNumber();
+        int number = postIo.inputNumber();
         int idx = getPostIdx(number);
 
-        if (idx == -1) io.printNoPost();
+        if (idx == -1) postIo.printNoPost();
         else {
             postList.posts.remove(idx);
             System.out.println(number + "번 게시물이 삭제되었습니다.");
@@ -76,13 +80,14 @@ public class PostControler {
 
     public void updatePost() {
         System.out.print("수정할 게시물 번호 : ");
-        int number = io.inputNumber();
+        int number = postIo.inputNumber();
         int idx = getPostIdx(number);
+        HashMap<String, String> info = postIo.getInputInfo();
 
-        if (idx == -1) io.printNoPost();
+        if (idx == -1) postIo.printNoPost();
         else {
-            postList.posts.get(idx).setTitle(io.getInputTitle());
-            postList.posts.get(idx).setDetail(io.getInputDetail());
+            postList.posts.get(idx).setTitle(info.get("제목"));
+            postList.posts.get(idx).setDetail(info.get("내용"));
             postList.posts.get(idx).setDate(Util.getNowTime());
             System.out.println(number + "번 게시물이 수정되었습니다.");
         }
@@ -101,16 +106,15 @@ public class PostControler {
     }
 
     public void addPosts() {
-        String title = io.getInputTitle();
-        String detail = io.getInputDetail();
-        addPost(title, detail);
+        HashMap<String, String> map = postIo.getInputInfo();
+        addPost(map.get("제목"), map.get("내용"));
         System.out.println("게시물이 등록되었습니다.");
     }
 
     public void printPostList() {
-        if (postList.posts.isEmpty()) io.printEmptyPost();
+        if (postList.posts.isEmpty()) postIo.printEmptyPost();
         else for (PostData post : postList.posts)
-            io.printSimple(post);
+            postIo.printSimple(post);
     }
 
 

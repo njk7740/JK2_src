@@ -1,7 +1,8 @@
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class IO {
+public class PostIO {
     Scanner scanner = new Scanner(System.in);
 
     public void drawLine() {
@@ -56,9 +57,13 @@ public class IO {
         System.out.println("완료되었습니다.");
     }
 
-    public String getInputTitle() {
+    public HashMap<String, String> getInputInfo() {
+        HashMap<String, String> map = new HashMap<>();
         System.out.print("제목을 입력해주세요 : ");
-        return inputString();
+        map.put("제목", inputString());
+        System.out.print("내용을 입력해주세요 : ");
+        map.put("내용", inputString());
+        return map;
     }
 
     public String getInputDetail() {
@@ -93,18 +98,5 @@ public class IO {
         System.out.println("****************************");
     }
 
-    public String inputID() {
-        System.out.print("사용하실 아이디를 입력해주세요 : ");
-        return scanner.nextLine();
-    }
 
-    public String inputPW() {
-        System.out.print("사용하실 비밀번호를 입력해주세요 : ");
-        return scanner.nextLine();
-    }
-
-    public String inputName() {
-        System.out.print("사용하실 닉네임을 입력해주세요 : ");
-        return scanner.nextLine();
-    }
 }
